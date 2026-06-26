@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salma UGC CRM – Prospect Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --fantasy:    #F7F3ED;
+    --cream:      #FFF8F4;
+    --vanilla:    #EFD8D6;
+    --rose:       #DBA1A2;
+    --tobago:     #422B23;
+    --sand:       #C2C6B9;
+    --gold:       #C8A96A;
+    --white:      #FFFFFF;
+    --shadow:     0 2px 16px rgba(66,43,35,0.08);
+    --radius:     14px;
+    --trans:      all 0.22s cubic-bezier(.4,0,.2,1);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--fantasy);
+    color: var(--tobago);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* ---- HEADER ---- */
+  .header {
+    background: var(--white);
+    border-bottom: 1px solid var(--vanilla);
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow);
+  }
+  .header-brand h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--tobago);
+  }
+  .header-brand p {
+    font-size: 11px;
+    color: var(--rose);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .search-bar {
+    display: flex;
+    align-items: center;
+    background: var(--fantasy);
+    border: 1.5px solid var(--vanilla);
+    border-radius: 30px;
+    padding: 7px 16px;
+    gap: 8px;
+  }
+  .search-bar input {
+    border: none;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--tobago);
+    outline: none;
+    width: 180px;
+  }
+  .search-bar input::placeholder { color: var(--sand); }
+  .search-bar svg { color: var(--sand); flex-shrink: 0; }
+
+  .btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    border-radius: 30px;
+    padding: 8px 18px;
+    transition: var(--trans);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary {
+    background: var(--tobago);
+    color: var(--white);
+  }
+  .btn-primary:hover { background: #5c3e32; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--tobago);
+    border: 1.5px solid var(--vanilla);
+  }
+  .btn-ghost:hover { background: var(--vanilla); }
+  .btn-rose {
+    background: var(--rose);
+    color: var(--white);
+  }
+  .btn-rose:hover { background: #cc9090; }
+
+  /* ---- LAYOUT ---- */
+  .app-layout {
+    display: flex;
+    min-height: calc(100vh - 72px);
+  }
+
+  /* ---- SIDEBAR ---- */
+  .sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background: var(--white);
+    border-right: 1px solid var(--vanilla);
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    position: sticky;
+    top: 72px;
+    height: calc(100vh - 72px);
+    overflow-y: auto;
+  }
+  .sidebar-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--sand);
+    padding: 12px 20px 6px;
+    font-weight: 500;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 0;
+    transition: var(--trans);
+    font-size: 13.5px;
+    color: var(--tobago);
+    border-left: 3px solid transparent;
+  }
+  .nav-item:hover { background: var(--fantasy); }
+  .nav-item.active {
+    background: var(--fantasy);
+    border-left-color: var(--rose);
+    color: var(--rose);
+    font-weight: 500;
+  }
+  .nav-item .count {
+    margin-left: auto;
+    font-size: 11px;
+    background: var(--vanilla);
+    color: var(--tobago);
+    border-radius: 20px;
+    padding: 1px 8px;
+  }
+  .nav-item.active .count { background: var(--rose); color: white; }
+
+  /* ---- MAIN ---- */
+  .main {
+    flex: 1;
+    padding: 28px;
+    overflow-x: hidden;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--tobago);
+  }
+  .section-subtitle {
+    font-size: 12px;
+    color: var(--sand);
+    margin-top: 2px;
+  }
+
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .filter-chip {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1.5px solid var(--vanilla);
+    background: var(--white);
+    color: var(--tobago);
+    cursor: pointer;
+    transition: var(--trans);
+  }
+  .filter-chip:hover, .filter-chip.active {
+    background: var(--rose);
+    border-color: var(--rose);
+    color: white;
+  }
+
+  /* ---- STATS ROW ---- */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+  .stat-card .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--tobago);
+    line-height: 1;
+  }
+  .stat-card .stat-label {
+    font-size: 11px;
+    color: var(--sand);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 4px;
+  }
+  .stat-card.rose .stat-num { color: var(--rose); }
+  .stat-card.gold .stat-num { color: var(--gold); }
+  .stat-card.green .stat-num { color: #8aaa8a; }
+
+  /* ---- BRAND GRID ---- */
+  .brand-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 16px;
+  }
+
+  .brand-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px;
+    transition: var(--trans);
+    border: 1.5px solid transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .brand-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(66,43,35,0.13);
+    border-color: var(--vanilla);
+  }
+  .brand-card.status-client { border-color: #8aaa8a; }
+  .brand-card.status-contacted { border-color: var(--gold); }
+  .brand-card.status-considering { border-color: var(--rose); }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--tobago);
+    line-height: 1.2;
+  }
+  .brand-sector {
+    font-size: 11px;
+    color: var(--sand);
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .brand-delete {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--sand);
+    font-size: 16px;
+    line-height: 1;
+    padding: 2px;
+    transition: color 0.15s;
+    flex-shrink: 0;
+  }
+  .brand-delete:hover { color: var(--rose); }
+
+  .ugc-type {
+    font-size: 12px;
+    color: #9e8882;
+    background: var(--fantasy);
+    border-radius: 8px;
+    padding: 5px 10px;
+    display: inline-block;
+  }
+
+  .fit-score {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .fit-label {
+    font-size: 11px;
+    color: var(--sand);
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .fit-bar-wrap {
+    flex: 1;
+    height: 4px;
+    background: var(--vanilla);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .fit-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--rose), var(--gold));
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+  .fit-num {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--tobago);
+    min-width: 30px;
+    text-align: right;
+  }
+
+  .status-select {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .status-btn {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1.5px solid var(--vanilla);
+    background: transparent;
+    cursor: pointer;
+    transition: var(--trans);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--tobago);
+  }
+  .status-btn:hover { border-color: var(--rose); }
+  .status-btn.active-none { background: var(--fantasy); border-color: var(--sand); color: var(--sand); }
+  .status-btn.active-contacted { background: var(--gold); border-color: var(--gold); color: white; }
+  .status-btn.active-considering { background: var(--rose); border-color: var(--rose); color: white; }
+  .status-btn.active-client { background: #8aaa8a; border-color: #8aaa8a; color: white; }
+
+  .tags {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-size: 10px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    background: var(--vanilla);
+    color: var(--tobago);
+    letter-spacing: 0.04em;
+  }
+  .tag.premium { background: #f5ead5; color: #9b7a3a; }
+  .tag.local { background: #e0e5de; color: #5a6b58; }
+  .tag.high-budget { background: #f0e0e0; color: #945050; }
+
+  .brand-notes {
+    width: 100%;
+    border: 1.5px solid var(--vanilla);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--tobago);
+    background: var(--fantasy);
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+    min-height: 50px;
+  }
+  .brand-notes:focus { border-color: var(--rose); }
+  .brand-notes::placeholder { color: var(--sand); }
+
+  /* ---- MODAL ---- */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(66,43,35,0.3);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 32px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 20px 60px rgba(66,43,35,0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .modal h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--tobago);
+  }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--sand);
+    font-weight: 500;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    border: 1.5px solid var(--vanilla);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--tobago);
+    background: var(--fantasy);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus { border-color: var(--rose); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 4px; }
+
+  .score-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--vanilla);
+    border-radius: 4px;
+    outline: none;
+  }
+  .score-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--rose);
+    cursor: pointer;
+    box-shadow: 0 0 0 3px rgba(219,161,162,0.3);
+  }
+  .score-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--rose);
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  /* ---- EMPTY STATE ---- */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--sand);
+  }
+  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* ---- DEPLOY GUIDE ---- */
+  .deploy-section {
+    background: var(--tobago);
+    color: var(--fantasy);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .deploy-section h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    color: var(--gold);
+  }
+  .deploy-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .deploy-step {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 13px;
+  }
+  .deploy-step .num {
+    background: var(--rose);
+    color: white;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .deploy-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--rose);
+  }
+
+  /* ---- TOAST ---- */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--tobago);
+    color: var(--white);
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 13px;
+    box-shadow: 0 8px 30px rgba(66,43,35,0.25);
+    z-index: 300;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ---- DARK MODE ---- */
+  body.dark {
+    --fantasy: #1e1510;
+    --cream: #251a14;
+    --vanilla: #3d2820;
+    --white: #2b1f18;
+    --tobago: #f0e0d0;
+    --sand: #9e8882;
+  }
+  body.dark .header { box-shadow: 0 2px 16px rgba(0,0,0,0.3); }
+
+  /* ---- MOBILE SIDEBAR (tabs) ---- */
+  .mobile-tabs {
+    display: none;
+    overflow-x: auto;
+    background: var(--white);
+    border-bottom: 1px solid var(--vanilla);
+    padding: 0 16px;
+    gap: 0;
+    scrollbar-width: none;
+  }
+  .mobile-tabs::-webkit-scrollbar { display: none; }
+  .mobile-tab {
+    padding: 12px 14px;
+    white-space: nowrap;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--sand);
+    border-bottom: 2px solid transparent;
+    transition: var(--trans);
+    flex-shrink: 0;
+  }
+  .mobile-tab.active { color: var(--rose); border-bottom-color: var(--rose); }
+
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .mobile-tabs { display: flex; }
+    .main { padding: 16px; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .brand-grid { grid-template-columns: 1fr; }
+    .header { padding: 14px 16px; }
+    .search-bar input { width: 120px; }
+    .form-row { grid-template-columns: 1fr; }
+    .app-layout { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-brand">
+    <h1>✦ Salma UGC CRM</h1>
+    <p>Beauty · Lifestyle · Mom · Coffee · Home · Food · Apps</p>
+  </div>
+  <div class="header-actions">
+    <div class="search-bar">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="Rechercher une marque…">
+    </div>
+    <button class="btn btn-ghost" onclick="toggleDark()">🌙</button>
+    <button class="btn btn-ghost" onclick="exportCSV()">↓ Export</button>
+    <button class="btn btn-primary" onclick="openAddModal()">+ Marque</button>
+  </div>
+</header>
+
+<!-- MOBILE TABS -->
+<div class="mobile-tabs" id="mobileTabs"></div>
+
+<!-- LAYOUT -->
+<div class="app-layout">
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar"></nav>
+
+  <!-- MAIN -->
+  <main class="main" id="main">
+    <!-- Stats -->
+    <div class="stats-row" id="statsRow"></div>
+
+    <!-- Section Title + Filter -->
+    <div class="section-header">
+      <div>
+        <div class="section-title" id="sectionTitle">Toutes les marques</div>
+        <div class="section-subtitle" id="sectionSubtitle">Gérez votre prospection UGC</div>
+      </div>
+    </div>
+
+    <div class="filter-bar" id="filterBar">
+      <span class="filter-chip active" data-filter="all" onclick="setFilter('all', this)">Toutes</span>
+      <span class="filter-chip" data-filter="none" onclick="setFilter('none', this)">À contacter</span>
+      <span class="filter-chip" data-filter="contacted" onclick="setFilter('contacted', this)">Contacté</span>
+      <span class="filter-chip" data-filter="considering" onclick="setFilter('considering', this)">À considérer</span>
+      <span class="filter-chip" data-filter="client" onclick="setFilter('client', this)">Client</span>
+    </div>
+
+    <div class="brand-grid" id="brandGrid"></div>
+
+    <!-- Deploy Guide -->
+    <div class="deploy-section">
+      <h3>🚀 Deploy on GitHub Pages</h3>
+      <div class="deploy-steps">
+        <div class="deploy-step"><div class="num">1</div><span>Créer un repo GitHub (ex: <em>salma-ugc-crm</em>)</span></div>
+        <div class="deploy-step"><div class="num">2</div><span>Uploader ce fichier <strong>index.html</strong> à la racine</span></div>
+        <div class="deploy-step"><div class="num">3</div><span>Aller dans <strong>Settings → Pages</strong></span></div>
+        <div class="deploy-step"><div class="num">4</div><span>Choisir branch <strong>main</strong> / root</span></div>
+        <div class="deploy-step"><div class="num">5</div><span>Activer GitHub Pages et copier le lien</span></div>
+      </div>
+      <p class="deploy-tagline">"This tool becomes your personal UGC CRM accessible anywhere."</p>
+    </div>
+  </main>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2 id="modalTitle">Nouvelle Marque</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nom de la marque *</label>
+        <input type="text" id="f_name" placeholder="ex: L'Oréal">
+      </div>
+      <div class="form-group">
+        <label>Section *</label>
+        <select id="f_section"></select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Secteur</label>
+      <input type="text" id="f_sector" placeholder="ex: Skincare Premium">
+    </div>
+    <div class="form-group">
+      <label>Type de contenu UGC</label>
+      <input type="text" id="f_ugcType" placeholder="ex: Unboxing, routine, tutoriel">
+    </div>
+    <div class="form-group">
+      <label>Score UGC Fit — <span id="scoreDisplay">80</span>/100</label>
+      <input type="range" class="score-slider" id="f_score" min="0" max="100" value="80" oninput="document.getElementById('scoreDisplay').textContent=this.value">
+    </div>
+    <div class="form-group">
+      <label>Tags (séparés par virgules)</label>
+      <input type="text" id="f_tags" placeholder="ex: premium, local, high-budget">
+    </div>
+    <div class="form-group">
+      <label>Notes personnelles</label>
+      <textarea id="f_notes" rows="2" placeholder="Idées de collaboration, budget estimé…"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-rose" onclick="saveBrand()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================
+// DATA
+// ============================
+const SECTIONS = [
+  { id: 'cafe',    emoji: '☕', label: 'Café / Lifestyle' },
+  { id: 'beauty',  emoji: '🧴', label: 'Beauty / Skincare' },
+  { id: 'mom',     emoji: '👶', label: 'Mom / Baby / Family' },
+  { id: 'home',    emoji: '🏡', label: 'Home / Organization' },
+  { id: 'food',    emoji: '🍽', label: 'Food / Daily Life' },
+  { id: 'apps',    emoji: '📱', label: 'Apps / Digital' },
+  { id: 'premium', emoji: '💎', label: 'Premium Global' },
+  { id: 'canada',  emoji: '🇨🇦', label: 'Canada / Québec' },
+];
+
+const INITIAL_BRANDS = [
+  // CAFÉ
+  { section:'cafe', name:'Nespresso', sector:'Café Premium', ugcType:'Morning routine, machine unboxing', score:90, tags:['premium'] },
+  { section:'cafe', name:'Keurig', sector:'Café Quotidien', ugcType:'Review café, routine matin', score:82 },
+  { section:'cafe', name:'Starbucks', sector:'Lifestyle Café', ugcType:'Aesthetic vlog, commande perso', score:78 },
+  { section:'cafe', name:'Tim Hortons', sector:'Café Local CA', ugcType:'Routine quotidienne', score:65, tags:['local'] },
+  { section:'cafe', name:'Lavazza', sector:'Café Italien', ugcType:'Ambiance, machine espresso', score:85, tags:['premium'] },
+  { section:'cafe', name:'Illy', sector:'Café Premium', ugcType:'Dégustation, lifestyle', score:87, tags:['premium'] },
+  { section:'cafe', name:'Café Saint-Henri', sector:'Café Artisanal QC', ugcType:'Barista, unboxing beans', score:80, tags:['local'] },
+  { section:'cafe', name:'Second Cup', sector:'Café CA', ugcType:'Routine matin', score:60, tags:['local'] },
+  { section:'cafe', name:'Oatbox', sector:'Lifestyle Breakfast', ugcType:'Morning routine healthy', score:83 },
+
+  // BEAUTY
+  { section:'beauty', name:"L'Oréal", sector:'Makeup & Skincare', ugcType:'Tutoriel makeup, avant-après', score:88 },
+  { section:'beauty', name:'Lancôme', sector:'Skincare Luxe', ugcType:'Routine skincare, unboxing', score:95, tags:['premium'] },
+  { section:'beauty', name:'Dior Beauty', sector:'Beauté Luxe', ugcType:'Haul luxe, GRWM', score:97, tags:['premium','high-budget'] },
+  { section:'beauty', name:'Chanel Beauty', sector:'Beauté Luxe', ugcType:'Parfum, lipstick haul', score:96, tags:['premium','high-budget'] },
+  { section:'beauty', name:'YSL Beauty', sector:'Beauté Luxe', ugcType:'Makeup tutoriel', score:93, tags:['premium'] },
+  { section:'beauty', name:'MAC Cosmetics', sector:'Makeup Pro', ugcType:'GRWM, look coloré', score:86 },
+  { section:'beauty', name:'NARS', sector:'Makeup Haut de Gamme', ugcType:'Look naturel, fondation', score:88, tags:['premium'] },
+  { section:'beauty', name:'Charlotte Tilbury', sector:'Skincare & Makeup', ugcType:'Routine glam, review', score:91, tags:['premium'] },
+  { section:'beauty', name:'Estée Lauder', sector:'Skincare Premium', ugcType:'Anti-âge, routine', score:92, tags:['premium'] },
+  { section:'beauty', name:'The Ordinary', sector:'Skincare Accessible', ugcType:'Routine budget, ingrédients', score:85 },
+  { section:'beauty', name:'CeraVe', sector:'Dermocosmétique', ugcType:'Routine sensitive skin', score:82 },
+  { section:'beauty', name:'La Roche-Posay', sector:'Dermocosmétique', ugcType:'SPF, sensitive skin', score:84 },
+  { section:'beauty', name:'Vichy', sector:'Dermocosmétique', ugcType:'Traitement, hydratation', score:78 },
+  { section:'beauty', name:'Garnier', sector:'Beauté Mass Market', ugcType:'Masque, après-shampooing', score:70 },
+  { section:'beauty', name:'Maybelline', sector:'Makeup Mass Market', ugcType:'Mascara, blush, GRWM', score:75 },
+  { section:'beauty', name:'BKIND', sector:'Beauté Naturelle QC', ugcType:'Produits vegan, unboxing', score:88, tags:['local'] },
+  { section:'beauty', name:'Marcelle', sector:'Beauté CA', ugcType:'Produits hypoallergéniques', score:76, tags:['local'] },
+  { section:'beauty', name:'Attitude', sector:'Éco-beauté QC', ugcType:'Produits naturels, famille', score:80, tags:['local'] },
+
+  // MOM
+  { section:'mom', name:'Huggies', sector:'Couches & Bébé', ugcType:'Review couches, lifestyle bébé', score:78 },
+  { section:'mom', name:'Pampers', sector:'Couches Premium', ugcType:'Unboxing, comparatif', score:80 },
+  { section:'mom', name:'Munchkin', sector:'Accessoires Bébé', ugcType:'Haul bébé, organisation', score:85 },
+  { section:'mom', name:'Baby Brezza', sector:'Cuisine Bébé', ugcType:'Review machine, routine', score:88 },
+  { section:'mom', name:'Skip Hop', sector:'Mode & Accessoires Bébé', ugcType:'Bag haul, lifestyle mom', score:86 },
+  { section:'mom', name:'Frida Baby', sector:'Santé Bébé', ugcType:'Review produits essentiels', score:84 },
+  { section:'mom', name:'Philips Avent', sector:'Allaitement & Biberon', ugcType:'Test produit, unboxing', score:82 },
+  { section:'mom', name:'Evenflo', sector:'Sécurité Bébé', ugcType:'Siège auto, review', score:74 },
+
+  // HOME
+  { section:'home', name:'IKEA', sector:'Déco & Organisation', ugcType:'Room tour, organisation dressing', score:88 },
+  { section:'home', name:'Dyson', sector:'Électroménager Premium', ugcType:'Nettoyage, unboxing', score:92, tags:['premium','high-budget'] },
+  { section:'home', name:'Smeg', sector:'Électroménager Design', ugcType:'Aesthetic kitchen, review', score:90, tags:['premium'] },
+  { section:'home', name:'Rubbermaid', sector:'Organisation', ugcType:'Organisation frigo, haul', score:75 },
+  { section:'home', name:'Method', sector:'Ménage Naturel', ugcType:'Cleaning routine, aesthetic', score:80 },
+  { section:'home', name:'Simplehuman', sector:'Accessoires Cuisine', ugcType:'Organisation, review poubelle', score:83 },
+  { section:'home', name:'Maison Lavande', sector:'Maison & Beauté QC', ugcType:'Ambiance maison, bougie', score:85, tags:['local'] },
+  { section:'home', name:'ATTITUDE Home', sector:'Produits Ménagers QC', ugcType:'Nettoyage naturel', score:78, tags:['local'] },
+
+  // FOOD
+  { section:'food', name:'HelloFresh', sector:'Repas Livrés', ugcType:'Unboxing box, recette rapide', score:87 },
+  { section:'food', name:'Goodfood', sector:'Repas Livrés CA', ugcType:'Meal prep, recette', score:84, tags:['local'] },
+  { section:'food', name:'Cook it', sector:'Repas Livrés QC', ugcType:'Recette, famille', score:86, tags:['local'] },
+  { section:'food', name:'Metro', sector:'Épicerie QC', ugcType:'Haul épicerie, budget', score:65, tags:['local'] },
+  { section:'food', name:'IGA', sector:'Épicerie QC', ugcType:'Haul, spéciaux de la semaine', score:63, tags:['local'] },
+  { section:'food', name:"President's Choice", sector:'Marque Épicerie CA', ugcType:'Taste test, haul', score:72 },
+  { section:'food', name:'Saputo', sector:'Fromage & Laitier QC', ugcType:'Recette, snack', score:68, tags:['local'] },
+
+  // APPS
+  { section:'apps', name:'Calm', sector:'Bien-être Mental', ugcType:'Routine détente, review app', score:85 },
+  { section:'apps', name:'Headspace', sector:'Méditation', ugcType:'Méditation quotidienne, témoignage', score:83 },
+  { section:'apps', name:'Flo', sector:'Santé Féminine', ugcType:'Témoignage, routine santé', score:82 },
+  { section:'apps', name:'Notion', sector:'Productivité', ugcType:'Setup, template, organisation', score:80 },
+  { section:'apps', name:'Todoist', sector:'Productivité', ugcType:'Organisation, daily routine', score:75 },
+  { section:'apps', name:'Fitbit', sector:'Santé & Fitness', ugcType:'Fitness vlog, données santé', score:78 },
+  { section:'apps', name:'Duolingo', sector:'Apprentissage', ugcType:'Daily challenge, résultats', score:72 },
+  { section:'apps', name:'Yuka', sector:'Santé & Nutrition', ugcType:'Scan produit, haul épicerie', score:79 },
+
+  // PREMIUM
+  { section:'premium', name:'Guerlain', sector:'Parfum & Beauté Luxe', ugcType:'Parfum unboxing, skincare', score:94, tags:['premium','high-budget'] },
+  { section:'premium', name:'Armani Beauty', sector:'Makeup Luxe', ugcType:'GRWM, fondation', score:93, tags:['premium','high-budget'] },
+  { section:'premium', name:'Rare Beauty', sector:'Makeup Inclusif', ugcType:'GRWM, blush viral', score:91, tags:['premium'] },
+  { section:'premium', name:'Drunk Elephant', sector:'Skincare Clean', ugcType:'Routine skincare, sérums', score:89, tags:['premium'] },
+  { section:'premium', name:'Caudalie', sector:'Skincare Vignes', ugcType:'Routine spa, review', score:87, tags:['premium'] },
+
+  // CANADA
+  { section:'canada', name:'Jouviance', sector:'Skincare QC', ugcType:'Anti-âge, routine', score:80, tags:['local'] },
+  { section:'canada', name:'Annabelle', sector:'Makeup CA', ugcType:'Makeup budget, haul', score:73, tags:['local'] },
+];
+
+// ============================
+// STATE
+// ============================
+let brands = [];
+let activeSection = 'all';
+let activeFilter = 'all';
+let searchQuery = '';
+let editingId = null;
+
+const LS_KEY = 'salma_ugc_crm_v2';
+
+function loadData() {
+  const saved = localStorage.getItem(LS_KEY);
+  if (saved) {
+    brands = JSON.parse(saved);
+  } else {
+    brands = INITIAL_BRANDS.map((b, i) => ({
+      id: i + 1,
+      status: 'none',
+      notes: '',
+      ...b,
+      tags: b.tags || []
+    }));
+    saveData();
+  }
+}
+
+function saveData() {
+  localStorage.setItem(LS_KEY, JSON.stringify(brands));
+}
+
+// ============================
+// RENDER
+// ============================
+function getFilteredBrands() {
+  return brands.filter(b => {
+    const matchSection = activeSection === 'all' || b.section === activeSection;
+    const matchFilter  = activeFilter === 'all' || b.status === activeFilter;
+    const matchSearch  = !searchQuery || b.name.toLowerCase().includes(searchQuery.toLowerCase()) || (b.sector||'').toLowerCase().includes(searchQuery.toLowerCase());
+    return matchSection && matchFilter && matchSearch;
+  });
+}
+
+function renderStats() {
+  const total = brands.length;
+  const contacted = brands.filter(b => b.status === 'contacted').length;
+  const considering = brands.filter(b => b.status === 'considering').length;
+  const clients = brands.filter(b => b.status === 'client').length;
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">Total Marques</div></div>
+    <div class="stat-card gold"><div class="stat-num">${contacted}</div><div class="stat-label">Contactées</div></div>
+    <div class="stat-card rose"><div class="stat-num">${considering}</div><div class="stat-label">À considérer</div></div>
+    <div class="stat-card green"><div class="stat-num">${clients}</div><div class="stat-label">Clients ✓</div></div>
+  `;
+}
+
+function renderSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const mobileTabs = document.getElementById('mobileTabs');
+  let sHtml = `<div class="sidebar-label">Sections</div>`;
+  let mHtml = `<div class="mobile-tab ${activeSection==='all'?'active':''}" onclick="setSection('all')">✦ Toutes</div>`;
+
+  sHtml += `<div class="nav-item ${activeSection==='all'?'active':''}" onclick="setSection('all')">
+    <span>✦</span> Toutes les marques
+    <span class="count">${brands.length}</span>
+  </div>`;
+
+  SECTIONS.forEach(s => {
+    const count = brands.filter(b => b.section === s.id).length;
+    sHtml += `<div class="nav-item ${activeSection===s.id?'active':''}" onclick="setSection('${s.id}')">
+      <span>${s.emoji}</span> ${s.label}
+      <span class="count">${count}</span>
+    </div>`;
+    mHtml += `<div class="mobile-tab ${activeSection===s.id?'active':''}" onclick="setSection('${s.id}')">${s.emoji} ${s.label.split('/')[0].trim()}</div>`;
+  });
+
+  sidebar.innerHTML = sHtml;
+  mobileTabs.innerHTML = mHtml;
+}
+
+function renderBrands() {
+  const grid = document.getElementById('brandGrid');
+  const filtered = getFilteredBrands();
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <div class="icon">🌸</div>
+      <p>Aucune marque trouvée.<br>Ajoutez-en une via le bouton + !</p>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(b => {
+    const statusClasses = {none:'active-none',contacted:'active-contacted',considering:'active-considering',client:'active-client'};
+    const cardClass = b.status !== 'none' ? `status-${b.status}` : '';
+    const tags = (b.tags||[]).map(t => `<span class="tag ${t}">${t}</span>`).join('');
+    return `
+    <div class="brand-card ${cardClass}" data-id="${b.id}">
+      <div class="card-top">
+        <div>
+          <div class="brand-name">${b.name}</div>
+          <div class="brand-sector">${b.sector||''}</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="brand-delete" title="Modifier" onclick="openEditModal(${b.id})">✎</button>
+          <button class="brand-delete" title="Supprimer" onclick="deleteBrand(${b.id})">✕</button>
+        </div>
+      </div>
+      ${b.ugcType ? `<span class="ugc-type">🎬 ${b.ugcType}</span>` : ''}
+      <div class="fit-score">
+        <span class="fit-label">UGC Fit</span>
+        <div class="fit-bar-wrap"><div class="fit-bar" style="width:${b.score||50}%"></div></div>
+        <span class="fit-num">${b.score||50}/100</span>
+      </div>
+      <div class="status-select">
+        <button class="status-btn ${b.status==='none'?'active-none':''}" onclick="setStatus(${b.id},'none')">À contacter</button>
+        <button class="status-btn ${b.status==='contacted'?'active-contacted':''}" onclick="setStatus(${b.id},'contacted')">Contacté ✓</button>
+        <button class="status-btn ${b.status==='considering'?'active-considering':''}" onclick="setStatus(${b.id},'considering')">À considérer</button>
+        <button class="status-btn ${b.status==='client'?'active-client':''}" onclick="setStatus(${b.id},'client')">Client 💛</button>
+      </div>
+      ${tags ? `<div class="tags">${tags}</div>` : ''}
+      <textarea class="brand-notes" placeholder="Notes personnelles…" oninput="saveNote(${b.id},this.value)">${b.notes||''}</textarea>
+    </div>`;
+  }).join('');
+
+  // Update section info
+  const sec = SECTIONS.find(s => s.id === activeSection);
+  document.getElementById('sectionTitle').textContent = sec ? `${sec.emoji} ${sec.label}` : 'Toutes les marques';
+  document.getElementById('sectionSubtitle').textContent = `${filtered.length} marque${filtered.length>1?'s':''} affichée${filtered.length>1?'s':''}`;
+}
+
+function render() {
+  renderStats();
+  renderSidebar();
+  renderBrands();
+}
+
+// ============================
+// ACTIONS
+// ============================
+function setSection(id) {
+  activeSection = id;
+  render();
+}
+
+function setFilter(f, el) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderBrands();
+}
+
+function setStatus(id, status) {
+  const b = brands.find(x => x.id === id);
+  if (b) { b.status = status; saveData(); render(); }
+}
+
+function saveNote(id, val) {
+  const b = brands.find(x => x.id === id);
+  if (b) { b.notes = val; saveData(); }
+}
+
+function deleteBrand(id) {
+  if (!confirm('Supprimer cette marque ?')) return;
+  brands = brands.filter(b => b.id !== id);
+  saveData();
+  render();
+  showToast('Marque supprimée');
+}
+
+// Search
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchQuery = e.target.value;
+  renderBrands();
+});
+
+// Dark mode
+function toggleDark() {
+  document.body.classList.toggle('dark');
+}
+
+// ============================
+// MODAL
+// ============================
+function populateSectionSelect() {
+  const sel = document.getElementById('f_section');
+  sel.innerHTML = SECTIONS.map(s => `<option value="${s.id}">${s.emoji} ${s.label}</option>`).join('');
+}
+
+function openAddModal() {
+  editingId = null;
+  document.getElementById('modalTitle').textContent = 'Nouvelle Marque';
+  document.getElementById('f_name').value = '';
+  document.getElementById('f_sector').value = '';
+  document.getElementById('f_ugcType').value = '';
+  document.getElementById('f_score').value = 80;
+  document.getElementById('scoreDisplay').textContent = '80';
+  document.getElementById('f_tags').value = '';
+  document.getElementById('f_notes').value = '';
+  if (activeSection !== 'all') document.getElementById('f_section').value = activeSection;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function openEditModal(id) {
+  const b = brands.find(x => x.id === id);
+  if (!b) return;
+  editingId = id;
+  document.getElementById('modalTitle').textContent = 'Modifier la Marque';
+  document.getElementById('f_name').value = b.name;
+  document.getElementById('f_section').value = b.section;
+  document.getElementById('f_sector').value = b.sector||'';
+  document.getElementById('f_ugcType').value = b.ugcType||'';
+  document.getElementById('f_score').value = b.score||50;
+  document.getElementById('scoreDisplay').textContent = b.score||50;
+  document.getElementById('f_tags').value = (b.tags||[]).join(', ');
+  document.getElementById('f_notes').value = b.notes||'';
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  editingId = null;
+}
+
+document.getElementById('modalOverlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+function saveBrand() {
+  const name = document.getElementById('f_name').value.trim();
+  if (!name) { showToast('Le nom est requis'); return; }
+  const tags = document.getElementById('f_tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+
+  if (editingId) {
+    const b = brands.find(x => x.id === editingId);
+    Object.assign(b, {
+      name,
+      section: document.getElementById('f_section').value,
+      sector: document.getElementById('f_sector').value,
+      ugcType: document.getElementById('f_ugcType').value,
+      score: parseInt(document.getElementById('f_score').value),
+      tags,
+      notes: document.getElementById('f_notes').value,
+    });
+    showToast('Marque mise à jour ✓');
+  } else {
+    brands.push({
+      id: Date.now(),
+      name,
+      section: document.getElementById('f_section').value,
+      sector: document.getElementById('f_sector').value,
+      ugcType: document.getElementById('f_ugcType').value,
+      score: parseInt(document.getElementById('f_score').value),
+      tags,
+      notes: document.getElementById('f_notes').value,
+      status: 'none',
+    });
+    showToast('Marque ajoutée ✓');
+  }
+  saveData();
+  closeModal();
+  render();
+}
+
+// ============================
+// EXPORT CSV
+// ============================
+function exportCSV() {
+  const cols = ['Nom','Section','Secteur','Type UGC','Score','Statut','Tags','Notes'];
+  const rows = brands.map(b => [
+    b.name, b.section, b.sector||'', b.ugcType||'', b.score||0, b.status,
+    (b.tags||[]).join('|'), (b.notes||'').replace(/\n/g,' ')
+  ]);
+  const csv = [cols, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'salma_ugc_crm.csv';
+  a.click();
+  showToast('Export CSV téléchargé ✓');
+}
+
+// ============================
+// TOAST
+// ============================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ============================
+// INIT
+// ============================
+populateSectionSelect();
+loadData();
+render();
+</script>
+</body>
+</html>
