@@ -866,77 +866,6 @@
       object-position: center 14%;
     }
 
-    /* — formulaire brief — */
-    .brief {
-      max-width: 1280px;
-      margin-top: clamp(40px, 5vw, 64px);
-      background: var(--sand);
-      border-radius: 28px;
-      padding: clamp(36px, 5vw, 60px) clamp(26px, 4.5vw, 60px);
-    }
-    .brief-head {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: baseline;
-      gap: 10px 22px;
-      margin-bottom: 30px;
-    }
-    .brief-title {
-      font-family: var(--serif);
-      font-size: clamp(30px, 3.4vw, 42px);
-      font-weight: 600;
-      color: var(--brown);
-    }
-    .brief-sub {
-      font-size: 14.5px;
-      font-weight: 300;
-      color: var(--brown-60);
-    }
-
-    .cform {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-    .cform-full { grid-column: 1 / -1; }
-    .cform input,
-    .cform textarea,
-    .cform select {
-      width: 100%;
-      border: 1.5px solid var(--line-b);
-      border-radius: 16px;
-      background: #fdfaf3;
-      color: var(--brown);
-      font-family: var(--sans);
-      font-size: 14.5px;
-      font-weight: 400;
-      outline: 0;
-      transition: border-color .22s;
-    }
-    .cform input::placeholder,
-    .cform textarea::placeholder { color: var(--brown-40); }
-    .cform select { color: var(--brown-60); }
-    .cform select option { background: var(--sand); color: var(--brown); }
-    .cform input:focus,
-    .cform textarea:focus,
-    .cform select:focus { border-color: var(--brown); }
-    .cform input, .cform select { height: 54px; padding: 0 20px; }
-    .cform textarea { padding: 16px 20px; min-height: 128px; resize: vertical; }
-    .cform-submit {
-      grid-column: 1 / -1;
-      min-height: 56px;
-      border-radius: 999px;
-      background: var(--brown);
-      color: var(--sand);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      transition: transform .24s var(--ease), opacity .24s;
-    }
-    .cform-submit:hover { transform: translateY(-2px); }
-    .cform-submit:disabled { opacity: .55; pointer-events: none; }
-
     /* ─────────────────────────  FOOTER  ───────────────────────── */
     .footer {
       background: var(--brown);
@@ -966,24 +895,6 @@
     }
     .footer a:hover { color: var(--rose); }
 
-    /* ─────────────────────────  TOAST  ───────────────────────── */
-    .toast {
-      position: fixed;
-      bottom: 24px; left: 50%;
-      transform: translate(-50%, 130px);
-      z-index: 200;
-      min-width: min(400px, calc(100vw - 32px));
-      padding: 15px 22px;
-      border-radius: 999px;
-      background: var(--brown);
-      color: var(--sand);
-      font-size: 13.5px;
-      font-weight: 600;
-      text-align: center;
-      box-shadow: 0 20px 50px rgba(62,39,35,.35);
-      transition: transform .34s var(--ease);
-    }
-    .toast.show { transform: translate(-50%, 0); }
 
     /* ─────────────────────────  RESPONSIVE  ───────────────────────── */
     @media (max-width: 1080px) {
@@ -1352,38 +1263,6 @@
           <img src="images/image00010.jpeg" alt="Salma Ben Hassine" loading="lazy">
         </div>
       </div>
-
-      <!-- formulaire de brief -->
-      <div class="brief">
-        <div class="brief-head">
-          <span class="brief-title">Envoie ton brief</span>
-          <span class="brief-sub">Réponse sous 48h — décris ton produit ou ta campagne.</span>
-        </div>
-        <form class="cform" id="contactForm" onsubmit="submitForm(event)" novalidate>
-          <div>
-            <input type="text" placeholder="Ton prénom / nom" name="name" required autocomplete="name">
-          </div>
-          <div>
-            <input type="email" placeholder="Ton email" name="email" required autocomplete="email">
-          </div>
-          <div>
-            <input type="text" placeholder="Nom de ta marque" name="brand" required>
-          </div>
-          <div>
-            <select name="budget">
-              <option value="" disabled selected>Budget estimé</option>
-              <option>Starter · ~150 $</option>
-              <option>Essential · ~350 $</option>
-              <option>Premium · ~650 $</option>
-              <option>À discuter</option>
-            </select>
-          </div>
-          <div class="cform-full">
-            <textarea name="message" placeholder="Décris ton produit, ton brief ou ce que tu recherches..." required></textarea>
-          </div>
-          <button type="submit" class="cform-submit" id="submitBtn">Envoyer le brief ✳</button>
-        </form>
-      </div>
     </section>
 
   </main>
@@ -1395,12 +1274,7 @@
     <a href="#top">Retour en haut ↑</a>
   </footer>
 
-  <div class="toast" id="toast"></div>
-
   <script>
-    // URL de deploiement Google Apps Script (voir google-apps-script-brief.js) — laisser vide = mode demo
-    const BRIEF_WEB_APP_URL = "";
-
     // Ombre de la nav au scroll
     const nav = document.getElementById('nav');
     window.addEventListener('scroll', () => {
@@ -1419,52 +1293,6 @@
       document.getElementById('contact').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // Envoi du brief
-    async function submitForm(e) {
-      e.preventDefault();
-      const form = e.target;
-      const btn  = document.getElementById('submitBtn');
-      const data = Object.fromEntries(new FormData(form));
-
-      if (!data.name || !data.email || !data.message) {
-        showToast('Remplis les champs obligatoires.');
-        return;
-      }
-
-      btn.disabled    = true;
-      btn.textContent = 'Envoi…';
-
-      try {
-        if (!BRIEF_WEB_APP_URL) {
-          await new Promise(r => setTimeout(r, 1200)); // délai démo
-          showToast('Mode démo : ajoute ton URL Apps Script pour recevoir les briefs par email.');
-        } else {
-          await fetch(BRIEF_WEB_APP_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(data)
-          });
-          showToast('Message envoyé. À très vite !');
-        }
-        form.reset();
-      } catch {
-        showToast('Erreur d\'envoi. Réessaie ou écris directement par DM.');
-      } finally {
-        btn.disabled    = false;
-        btn.textContent = 'Envoyer le brief ✳';
-      }
-    }
-
-    // Toast
-    let toastT;
-    function showToast(msg) {
-      clearTimeout(toastT);
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.classList.add('show');
-      toastT = setTimeout(() => t.classList.remove('show'), 3600);
-    }
   </script>
 </body>
 </html>
