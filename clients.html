@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Salma Ben Hassine UGC - Client Selector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    * { margin: 0; }
+
+    :root {
+      --rouge-noir: #720808;
+      --cranberry: #a10728;
+      --pink: #fec6d3;
+      --blush: #f6e6e5;
+      --blue: #bad4ed;
+      --blue-soft: #dae9f7;
+      --cream: #f6f0ea;
+      --paper: #fffaf6;
+      --ink: #211716;
+      --muted: #80716c;
+      --line: rgba(114, 8, 8, .15);
+      --shadow: 0 24px 70px rgba(114, 8, 8, .12);
+      --radius: 28px;
+      --radius-sm: 18px;
+      --ease: cubic-bezier(.2,.8,.2,1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 16% 8%, rgba(254,198,211,.36), transparent 24rem),
+        radial-gradient(circle at 86% 0%, rgba(186,212,237,.44), transparent 25rem),
+        linear-gradient(180deg, #f6f0ea 0%, #fffaf6 52%, #f6e6e5 100%);
+      font-family: "Poppins", "DM Sans", sans-serif;
+      overflow-x: hidden;
+    }
+
+    body.modal-open { overflow: hidden; }
+
+    button, input, textarea, select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page-shell {
+      width: min(1440px, 100%);
+      margin: 0 auto;
+      padding: 20px clamp(16px, 3vw, 42px) 120px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 14px;
+      z-index: 30;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 18px;
+      padding: 12px 14px;
+      border: 1px solid rgba(114,8,8,.11);
+      border-radius: 999px;
+      background: rgba(255, 250, 246, .78);
+      box-shadow: 0 18px 54px rgba(114,8,8,.08);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand-word {
+      justify-self: start;
+      padding-left: 12px;
+      color: var(--cranberry);
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(32px, 5vw, 62px);
+      font-weight: 700;
+      line-height: .82;
+      letter-spacing: 0;
+    }
+
+    .brand-word span {
+      display: inline-block;
+      transform: translateY(-.08em);
+      font-size: .32em;
+      margin-left: .05em;
+    }
+
+    .nav-pills {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .nav-pill {
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--rouge-noir);
+      font-family: "DM Sans", sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      transition: transform .25s var(--ease), background .25s var(--ease), color .25s var(--ease);
+      white-space: nowrap;
+    }
+
+    .nav-pill:hover,
+    .nav-pill.active {
+      color: #fff;
+      background: var(--rouge-noir);
+      transform: translateY(-1px);
+    }
+
+    .top-actions {
+      justify-self: end;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn,
+    .bag-button {
+      display: inline-grid;
+      place-items: center;
+      border-radius: 999px;
+      transition: transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease);
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      color: var(--rouge-noir);
+      background: var(--blush);
+    }
+
+    .bag-button {
+      grid-auto-flow: column;
+      gap: 10px;
+      min-height: 42px;
+      padding: 0 15px;
+      color: #fff;
+      background: var(--cranberry);
+      box-shadow: 0 14px 28px rgba(161,7,40,.22);
+      font-family: "DM Sans", sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .icon-btn:hover,
+    .bag-button:hover {
+      transform: translateY(-2px);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, .95fr);
+      gap: clamp(24px, 5vw, 68px);
+      align-items: end;
+      min-height: 72vh;
+      padding: clamp(54px, 8vw, 108px) 0 36px;
+    }
+
+    .hero-kicker {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: var(--cranberry);
+      font-family: "DM Sans", sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .hero-kicker::before,
+    .hero-kicker::after {
+      content: "";
+      width: 46px;
+      height: 1px;
+      background: var(--cranberry);
+      opacity: .48;
+    }
+
+    h1 {
+      max-width: 950px;
+      margin-top: 20px;
+      color: var(--rouge-noir);
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(68px, 11vw, 170px);
+      font-weight: 700;
+      line-height: .78;
+      letter-spacing: 0;
+    }
+
+    .hero-copy {
+      max-width: 650px;
+      margin-top: 26px;
+      color: #4c3b38;
+      font-size: clamp(17px, 2vw, 24px);
+      font-weight: 300;
+      line-height: 1.35;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .btn {
+      display: inline-grid;
+      grid-auto-flow: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 52px;
+      padding: 0 22px;
+      border-radius: 999px;
+      font-family: "DM Sans", sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      transition: transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease);
+    }
+
+    .btn-primary {
+      color: #fff;
+      background: var(--rouge-noir);
+      box-shadow: 0 18px 38px rgba(114,8,8,.22);
+    }
+
+    .btn-soft {
+      color: var(--rouge-noir);
+      background: var(--pink);
+    }
+
+    .btn-ghost {
+      color: var(--rouge-noir);
+      background: rgba(255,250,246,.72);
+      border: 1px solid var(--line);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+    }
+
+    .collage {
+      position: relative;
+      min-height: 570px;
+      isolation: isolate;
+    }
+
+    .logo-tile {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      border-radius: 38px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      animation: floaty 6s var(--ease) infinite;
+    }
+
+    .logo-tile .monogram {
+      color: inherit;
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(92px, 11vw, 154px);
+      font-weight: 600;
+      line-height: .7;
+    }
+
+    .tile-pink {
+      top: 14px;
+      left: 0;
+      width: 54%;
+      aspect-ratio: 1;
+      color: var(--cranberry);
+      background: var(--pink);
+    }
+
+    .tile-red {
+      top: 64px;
+      right: 0;
+      width: 46%;
+      aspect-ratio: 1;
+      color: #fff;
+      background: linear-gradient(145deg, #b52318, var(--rouge-noir));
+      animation-delay: -2s;
+    }
+
+    .photo-strip {
+      position: absolute;
+      right: 10%;
+      bottom: 0;
+      width: 50%;
+      min-height: 280px;
+      border-radius: 28px;
+      border: 10px solid var(--paper);
+      background:
+        linear-gradient(rgba(255,250,246,.38), rgba(255,250,246,.06)),
+        url("https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80") center / cover;
+      box-shadow: var(--shadow);
+      transform: rotate(2deg);
+    }
+
+    .type-card {
+      position: absolute;
+      left: 8%;
+      bottom: 44px;
+      width: 44%;
+      padding: 26px;
+      border-radius: 26px;
+      color: var(--rouge-noir);
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      transform: rotate(-3deg);
+    }
+
+    .type-card strong {
+      display: block;
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(56px, 6vw, 96px);
+      line-height: .76;
+    }
+
+    .type-card span {
+      display: block;
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .stripe-card {
+      position: absolute;
+      right: 0;
+      bottom: 118px;
+      width: 30%;
+      min-height: 136px;
+      border-radius: 24px;
+      background: repeating-linear-gradient(90deg, var(--blue) 0 18px, var(--paper) 18px 36px);
+      box-shadow: var(--shadow);
+      transform: rotate(-2deg);
+      opacity: .95;
+    }
+
+    .section-heading {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 22px;
+      padding-top: 46px;
+      margin-bottom: 22px;
+      border-top: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      color: var(--cranberry);
+      font-family: "DM Sans", sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin-top: 8px;
+      color: var(--rouge-noir);
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(46px, 7vw, 98px);
+      font-weight: 700;
+      line-height: .84;
+      letter-spacing: 0;
+    }
+
+    .section-heading p {
+      max-width: 560px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) auto;
+      gap: 14px;
+      margin-bottom: 26px;
+    }
+
+    .search-field {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      align-items: center;
+      gap: 10px;
+      min-height: 58px;
+      padding: 0 20px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,250,246,.78);
+      box-shadow: 0 12px 32px rgba(114,8,8,.06);
+    }
+
+    .search-field input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      color: var(--rouge-noir);
+      background: transparent;
+      font-size: 15px;
+    }
+
+    .category-scroller {
+      display: flex;
+      gap: 8px;
+      max-width: 100%;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scrollbar-width: none;
+    }
+
+    .category-scroller::-webkit-scrollbar { display: none; }
+
+    .category-chip {
+      min-height: 58px;
+      padding: 0 18px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--rouge-noir);
+      background: rgba(255,250,246,.78);
+      font-family: "DM Sans", sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      transition: transform .25s var(--ease), background .25s var(--ease), color .25s var(--ease);
+    }
+
+    .category-chip.active,
+    .category-chip:hover {
+      color: #fff;
+      background: var(--cranberry);
+      transform: translateY(-2px);
+    }
+
+    .prospect-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+    }
+
+    .prospect-card {
+      position: relative;
+      grid-column: span 4;
+      min-height: 520px;
+      display: grid;
+      grid-template-rows: 250px 1fr;
+      border: 1px solid rgba(114,8,8,.13);
+      border-radius: var(--radius);
+      background: rgba(255,250,246,.86);
+      box-shadow: 0 18px 45px rgba(114,8,8,.08);
+      overflow: hidden;
+      transition: transform .28s var(--ease), box-shadow .28s var(--ease), border-color .28s var(--ease);
+      animation: rise .6s var(--ease) both;
+    }
+
+    .prospect-card:hover {
+      transform: translateY(-7px);
+      border-color: rgba(161,7,40,.32);
+      box-shadow: 0 28px 80px rgba(114,8,8,.16);
+    }
+
+    .prospect-card.selected {
+      border-color: var(--cranberry);
+      box-shadow: 0 28px 80px rgba(161,7,40,.19);
+    }
+
+    .visual {
+      position: relative;
+      display: grid;
+      place-items: center;
+      padding: 34px;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(254,198,211,.86), rgba(218,233,247,.78)),
+        var(--blush);
+    }
+
+    .visual::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 16% 12%, rgba(255,250,246,.9) 0 8%, transparent 8.5%),
+        linear-gradient(90deg, rgba(255,250,246,.22) 0 1px, transparent 1px),
+        linear-gradient(180deg, rgba(255,250,246,.22) 0 1px, transparent 1px);
+      background-size: auto, 34px 34px, 34px 34px;
+      opacity: .62;
+      transform: scale(1.02);
+      transition: transform .45s var(--ease);
+    }
+
+    .prospect-card:hover .visual::before {
+      transform: scale(1.08);
+    }
+
+    .visual::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, transparent 48%, rgba(114,8,8,.18)),
+        radial-gradient(circle at 82% 14%, rgba(255,250,246,.58), transparent 32%);
+      pointer-events: none;
+    }
+
+    .brand-logo-card {
+      position: relative;
+      z-index: 1;
+      width: min(70%, 210px);
+      min-height: 126px;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      border: 1px solid rgba(114,8,8,.12);
+      border-radius: 30px;
+      background: rgba(255,250,246,.9);
+      box-shadow: 0 18px 42px rgba(114,8,8,.13);
+    }
+
+    .brand-logo-card img {
+      display: block;
+      max-width: 100%;
+      max-height: 82px;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+    }
+
+    .brand-logo-card .fallback-logo {
+      display: none;
+      color: var(--cranberry);
+      font-family: "Cormorant Garamond", serif;
+      font-size: 56px;
+      font-weight: 700;
+      line-height: .8;
+      text-align: center;
+    }
+
+    .score {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 2;
+      min-width: 58px;
+      min-height: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      color: #fff;
+      background: rgba(114,8,8,.88);
+      font-family: "DM Sans", sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      box-shadow: 0 12px 28px rgba(114,8,8,.28);
+    }
+
+    .save-badge {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 2;
+      display: none;
+      min-height: 38px;
+      place-items: center;
+      padding: 0 13px;
+      border-radius: 999px;
+      color: var(--rouge-noir);
+      background: var(--pink);
+      font-family: "DM Sans", sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .prospect-card.selected .save-badge {
+      display: grid;
+    }
+
+    .card-body {
+      display: grid;
+      gap: 16px;
+      padding: 22px;
+    }
+
+    .card-title-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .prospect-name {
+      color: var(--rouge-noir);
+      font-family: "Cormorant Garamond", serif;
+      font-size: 38px;
+      font-weight: 700;
+      line-height: .9;
+      letter-spacing: 0;
+    }
+
+    .category-label {
+      align-self: start;
+      padding: 8px 10px;
+      border-radius: 999px;
+      color: var(--rouge-noir);
+      background: var(--blush);
+      font-family: "DM Sans", sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .prospect-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .meta-pill {
+      padding: 8px 10px;
+      border-radius: 999px;
+      color: #51423e;
+      background: rgba(186,212,237,.42);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .fit-text {
+      color: #4d3d3a;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .card-footer {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    .select-btn {
+      min-height: 48px;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--rouge-noir);
+      font-family: "DM Sans", sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      transition: transform .25s var(--ease), background .25s var(--ease);
+    }
+
+    .prospect-card.selected .select-btn {
+      color: var(--rouge-noir);
+      background: var(--pink);
+    }
+
+    .select-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .detail-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      color: var(--rouge-noir);
+      background: var(--blue-soft);
+      font-size: 21px;
+      transition: transform .25s var(--ease);
+    }
+
+    .detail-btn:hover {
+      transform: rotate(-8deg) scale(1.05);
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      min-height: 220px;
+      display: grid;
+      place-items: center;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      color: var(--muted);
+      background: rgba(255,250,246,.6);
+      text-align: center;
+    }
+
+    .bag-panel {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 40;
+      width: min(520px, calc(100vw - 36px));
+      max-height: calc(100vh - 36px);
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      border: 1px solid rgba(114,8,8,.16);
+      border-radius: 30px;
+      background: rgba(255,250,246,.95);
+      box-shadow: 0 28px 90px rgba(114,8,8,.2);
+      transform: translateY(calc(100% + 34px));
+      transition: transform .35s var(--ease);
+      overflow: hidden;
+      backdrop-filter: blur(18px);
+    }
+
+    .bag-panel.open {
+      transform: translateY(0);
+    }
+
+    .bag-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      padding: 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .bag-head h3,
+    .modal-title {
+      color: var(--rouge-noir);
+      font-family: "Cormorant Garamond", serif;
+      font-size: 42px;
+      font-weight: 700;
+      line-height: .9;
+      letter-spacing: 0;
+    }
+
+    .bag-head p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .bag-close {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--rouge-noir);
+    }
+
+    .bag-list {
+      display: grid;
+      gap: 12px;
+      padding: 16px;
+      overflow: auto;
+    }
+
+    .bag-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: #fff;
+    }
+
+    .bag-item strong {
+      display: block;
+      color: var(--rouge-noir);
+      font-family: "Cormorant Garamond", serif;
+      font-size: 27px;
+      line-height: .95;
+    }
+
+    .bag-item span {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .bag-item select,
+    .bag-item textarea,
+    .client-form input,
+    .client-form textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      color: var(--rouge-noir);
+      background: var(--paper);
+      outline: 0;
+    }
+
+    .bag-item select {
+      min-height: 42px;
+      padding: 0 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .bag-item textarea {
+      grid-column: 1 / -1;
+      min-height: 72px;
+      padding: 10px;
+      resize: vertical;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .remove-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      color: var(--rouge-noir);
+      background: var(--blush);
+    }
+
+    .bag-foot {
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+      border-top: 1px solid var(--line);
+      background: rgba(246,230,229,.52);
+    }
+
+    .client-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .client-form textarea {
+      grid-column: 1 / -1;
+      min-height: 74px;
+      padding: 12px;
+      resize: vertical;
+    }
+
+    .client-form input {
+      min-height: 46px;
+      padding: 0 12px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      min-height: 54px;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--cranberry);
+      font-family: "DM Sans", sans-serif;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      box-shadow: 0 18px 38px rgba(161,7,40,.2);
+    }
+
+    .submit-btn:disabled {
+      cursor: not-allowed;
+      opacity: .55;
+      box-shadow: none;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background: rgba(33,23,22,.38);
+      backdrop-filter: blur(12px);
+    }
+
+    .modal.open {
+      display: grid;
+    }
+
+    .modal-card {
+      width: min(820px, 100%);
+      max-height: calc(100vh - 36px);
+      display: grid;
+      grid-template-columns: .85fr 1fr;
+      border-radius: 34px;
+      background: var(--paper);
+      box-shadow: 0 30px 100px rgba(33,23,22,.35);
+      overflow: hidden;
+    }
+
+    .modal-image {
+      min-height: 420px;
+      background:
+        var(--image) center / 62% auto no-repeat,
+        linear-gradient(135deg, var(--pink), var(--blue-soft));
+    }
+
+    .modal-content {
+      display: grid;
+      align-content: start;
+      gap: 16px;
+      padding: 30px;
+      overflow: auto;
+    }
+
+    .modal-content p {
+      color: #4f403d;
+      line-height: 1.55;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .detail-box {
+      padding: 14px;
+      border-radius: 18px;
+      background: var(--blush);
+    }
+
+    .detail-box span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .detail-box strong {
+      display: block;
+      margin-top: 6px;
+      color: var(--rouge-noir);
+      font-size: 15px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      z-index: 70;
+      min-width: min(420px, calc(100vw - 32px));
+      padding: 14px 18px;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--rouge-noir);
+      box-shadow: 0 20px 50px rgba(114,8,8,.26);
+      text-align: center;
+      transform: translate(-50%, 120px);
+      transition: transform .35s var(--ease);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .toast.show {
+      transform: translate(-50%, 0);
+    }
+
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50% { transform: translateY(-14px) rotate(1deg); }
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 1120px) {
+      .topbar {
+        grid-template-columns: 1fr auto;
+        border-radius: 30px;
+      }
+
+      .nav-pills {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        justify-content: start;
+        overflow-x: auto;
+        padding: 2px 2px 4px;
+        scrollbar-width: none;
+      }
+
+      .nav-pills::-webkit-scrollbar { display: none; }
+
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+
+      .collage {
+        min-height: 500px;
+      }
+
+      .prospect-card {
+        grid-column: span 6;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .page-shell {
+        padding-inline: 14px;
+      }
+
+      .topbar {
+        top: 8px;
+        gap: 10px;
+        padding: 10px;
+      }
+
+      .brand-word {
+        font-size: 36px;
+      }
+
+      .bag-button span {
+        display: none;
+      }
+
+      .hero {
+        gap: 24px;
+        padding-top: 34px;
+      }
+
+      h1 {
+        margin-top: 16px;
+        font-size: clamp(60px, 19vw, 92px);
+      }
+
+      .hero-copy {
+        margin-top: 18px;
+        font-size: 17px;
+      }
+
+      .hero-actions {
+        display: grid;
+        margin-top: 24px;
+      }
+
+      .collage {
+        min-height: 338px;
+      }
+
+      .tile-pink {
+        width: 52%;
+      }
+
+      .tile-red {
+        top: 48px;
+        width: 43%;
+      }
+
+      .photo-strip {
+        width: 54%;
+        min-height: 172px;
+      }
+
+      .type-card {
+        bottom: 28px;
+        width: 50%;
+        padding: 18px;
+      }
+
+      .type-card strong {
+        font-size: 50px;
+      }
+
+      .stripe-card {
+        bottom: 88px;
+        width: 32%;
+        min-height: 92px;
+      }
+
+      .section-heading,
+      .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .section-heading p {
+        font-size: 14px;
+      }
+
+      .prospect-card {
+        grid-column: 1 / -1;
+        min-height: auto;
+        grid-template-rows: 230px 1fr;
+      }
+
+      .prospect-name {
+        font-size: 34px;
+      }
+
+      .bag-panel {
+        right: 10px;
+        bottom: 10px;
+        width: calc(100vw - 20px);
+        max-height: calc(100vh - 20px);
+      }
+
+      .client-form,
+      .modal-card {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-image {
+        min-height: 240px;
+      }
+
+      .modal-content {
+        padding: 22px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar" aria-label="Navigation principale">
+      <a class="brand-word" href="#top" aria-label="Salma Ben Hassine UGC">Salma<span>*</span></a>
+      <nav class="nav-pills" id="topCategories" aria-label="Categories rapides"></nav>
+      <div class="top-actions">
+        <button class="icon-btn" type="button" onclick="scrollToProspects()" aria-label="Rechercher">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m21 21-4.3-4.3M10.8 18a7.2 7.2 0 1 1 0-14.4 7.2 7.2 0 0 1 0 14.4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <button class="bag-button" type="button" onclick="toggleBag(true)" aria-label="Ouvrir la selection">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6.5 8h11l1 12h-13l1-12Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 8a3 3 0 0 1 6 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span>Selection</span>
+          <strong id="bagCount">0</strong>
+        </button>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="heroTitle">
+        <div>
+          <div class="hero-kicker">2026 client edit</div>
+          <h1 id="heroTitle">Salma Ben Hassine UGC.</h1>
+          <p class="hero-copy">Une vitrine interactive pour choisir les marques a contacter, noter les priorites, puis envoyer la selection finale en un tap.</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" type="button" onclick="scrollToProspects()">Explorer les prospects</button>
+            <button class="btn btn-soft" type="button" onclick="toggleBag(true)">Voir ma selection</button>
+            <button class="btn btn-ghost" type="button" onclick="setCategory('local'); scrollToProspects();">Voir Canada / Quebec</button>
+          </div>
+        </div>
+
+        <div class="collage" aria-hidden="true">
+          <div class="logo-tile tile-pink"><div class="monogram">lg</div></div>
+          <div class="logo-tile tile-red"><div class="monogram">LC</div></div>
+          <div class="photo-strip"></div>
+          <div class="type-card"><strong>UGC<br>Club</strong><span>curated prospect room</span></div>
+          <div class="stripe-card"></div>
+        </div>
+      </section>
+
+      <section id="prospects" aria-labelledby="prospectsTitle">
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow">Prospect boutique</div>
+            <h2 id="prospectsTitle">Pick Salma's possible clients.</h2>
+          </div>
+          <p>Chaque carte est pensée comme une fiche boutique: fit UGC, score, type de contenu possible, budget pressenti et notes de selection.</p>
+        </div>
+
+        <div class="controls">
+          <label class="search-field">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m21 21-4.3-4.3M10.8 18a7.2 7.2 0 1 1 0-14.4 7.2 7.2 0 0 1 0 14.4Z" stroke="#720808" stroke-width="2" stroke-linecap="round"/></svg>
+            <input id="searchInput" type="search" placeholder="Chercher une marque, un secteur, une ville..." autocomplete="off">
+          </label>
+          <div class="category-scroller" id="categoryScroller" aria-label="Filtres categories"></div>
+        </div>
+
+        <div class="prospect-grid" id="prospectGrid"></div>
+      </section>
+
+      <section id="system" aria-labelledby="systemTitle">
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow">Response capture</div>
+            <h2 id="systemTitle">Selection sent privately.</h2>
+          </div>
+          <p>Les choix partent vers ton tableau de suivi via Apps Script quand tu ajoutes ton URL de deploiement. Rien de technique n'apparait dans l'experience client.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <aside class="bag-panel" id="bagPanel" aria-label="Selection client" aria-live="polite">
+    <div class="bag-head">
+      <div>
+        <h3>Selection bag</h3>
+        <p>Priorise, ajoute des notes, puis envoie la selection. En mode demo, le fichier se telecharge si le Google Sheet n'est pas encore connecte.</p>
+      </div>
+      <button class="bag-close" type="button" onclick="toggleBag(false)" aria-label="Fermer">x</button>
+    </div>
+    <div class="bag-list" id="bagList"></div>
+    <div class="bag-foot">
+      <div class="client-form">
+        <input id="clientName" type="text" placeholder="Nom client" autocomplete="name">
+        <input id="clientEmail" type="email" placeholder="Email client" autocomplete="email">
+        <textarea id="globalNote" placeholder="Note generale: brief, style recherche, budget, contraintes..."></textarea>
+      </div>
+      <button class="submit-btn" id="submitBtn" type="button" onclick="submitSelection()">Envoyer la selection</button>
+    </div>
+  </aside>
+
+  <div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <div class="modal-image" id="modalImage"></div>
+      <div class="modal-content">
+        <button class="bag-close" type="button" onclick="closeDetails()" aria-label="Fermer">x</button>
+        <div class="eyebrow" id="modalCategory"></div>
+        <h3 class="modal-title" id="modalTitle"></h3>
+        <p id="modalFit"></p>
+        <div class="detail-grid" id="modalDetails"></div>
+        <button class="btn btn-primary" id="modalSelectBtn" type="button">Ajouter a ma selection</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw3R-hnXi7FgEIiOEI5enWqqcpsnjifW9jGoD9qlcGrbdLgM5qNv_nzb-Cv71g8jsn1eA/exec";
+
+    const categories = [
+      { id: "all", label: "All" },
+      { id: "coffee", label: "Coffee" },
+      { id: "beauty", label: "Beauty" },
+      { id: "mom", label: "Mom & Baby" },
+      { id: "home", label: "Home" },
+      { id: "food", label: "Food" },
+      { id: "apps", label: "Apps" },
+      { id: "luxury", label: "Luxury" },
+      { id: "local", label: "Canada / Quebec" }
+    ];
+
+    const CLIENT_GROUPS = [
+      { category: "coffee", section: "Global Premium Coffee Brands", names: ["Nespresso", "Keurig", "Starbucks", "Dunkin'", "Lavazza", "Illy", "Peet's Coffee", "Costa Coffee"] },
+      { category: "local", section: "Canada / Quebec Coffee Brands", names: ["Tim Hortons", "Second Cup", "Cafe Saint-Henri", "Cafe Olimpico", "Balzac's Coffee", "Dispatch Coffee", "Van Houtte", "Oatbox"] },
+      { category: "coffee", section: "Lifestyle / Home Coffee Products", names: ["Bodum", "Fellow Products", "Smeg", "Philips Coffee Machines", "De'Longhi"] },
+      { category: "food", section: "Subscription / Lifestyle Brands", names: ["HelloFresh", "Goodfood Canada", "Cook it Quebec"] },
+
+      { category: "beauty", section: "Luxury Beauty Brands", names: ["Dior Beauty", "Chanel Beauty", "Yves Saint Laurent Beauty", "Lancome", "Estee Lauder", "Guerlain", "Armani Beauty", "Charlotte Tilbury", "MAC Cosmetics", "NARS"] },
+      { category: "beauty", section: "Premium Mass Market", names: ["L'Oreal Paris", "Maybelline", "Garnier", "NYX Cosmetics", "Revlon", "Neutrogena", "CoverGirl"] },
+      { category: "beauty", section: "Dermatology / Science Skincare", names: ["CeraVe", "La Roche-Posay", "Vichy", "The Ordinary", "Avene", "Bioderma"] },
+      { category: "beauty", section: "Clean Beauty", names: ["Rare Beauty", "Drunk Elephant", "Caudalie", "Biossance", "Youth to the People", "Ilia Beauty", "Tata Harper", "Fresh Beauty"] },
+      { category: "local", section: "Canada / Quebec Beauty", names: ["Marcelle", "Annabelle", "Jouviance", "BKIND", "Quo Beauty", "ATTITUDE"] },
+
+      { category: "mom", section: "Global Baby Brands", names: ["Pampers", "Huggies", "Munchkin", "Baby Brezza", "Philips Avent", "Skip Hop", "Frida Baby", "Evenflo", "Graco"] },
+      { category: "mom", section: "Parenting / Lifestyle", names: ["Lovevery", "Hatch Baby", "Owlet", "Doona"] },
+      { category: "mom", section: "Retail / Pharmacy Brands", names: ["Shoppers Drug Mart", "Jean Coutu", "Amazon Baby Store"] },
+
+      { category: "home", section: "Global Home Brands", names: ["IKEA", "Dyson", "Philips", "Smeg", "Shark", "LG Home Appliances"] },
+      { category: "home", section: "Cleaning & Organization", names: ["Method", "Mrs. Meyer's", "Simplehuman", "Rubbermaid", "Tupperware", "OXO"] },
+      { category: "home", section: "Clean Living / Lifestyle", names: ["ATTITUDE", "Maison Lavande"] },
+      { category: "home", section: "Amazon / Viral Home Products", names: ["Amazon Basics", "TikTok Home Gadgets"] },
+
+      { category: "food", section: "Meal Kit Brands", names: ["HelloFresh", "Goodfood", "Cook it", "Marley Spoon"] },
+      { category: "food", section: "Grocery / Retail", names: ["IGA", "Metro", "Walmart Canada", "Costco"] },
+      { category: "food", section: "Food Lifestyle Brands", names: ["Oatbox", "President's Choice", "Saputo", "Danone"] },
+      { category: "food", section: "Healthy / Wellness Food", names: ["Huel", "Herbalife", "Ensure", "YFood"] },
+
+      { category: "apps", section: "Wellness Apps", names: ["Calm", "Headspace", "Flo", "BetterHelp", "Sleep Cycle"] },
+      { category: "apps", section: "Productivity Apps", names: ["Notion", "Todoist", "Evernote", "Trello"] },
+      { category: "apps", section: "Fitness Apps", names: ["Fitbit", "Nike Training Club", "MyFitnessPal"] },
+      { category: "apps", section: "Lifestyle / Utility Apps", names: ["Duolingo", "Yuka", "Revolut", "Mint"] },
+
+      { category: "luxury", section: "Beauty & Fashion Luxury", names: ["Dior", "Chanel", "Gucci Beauty", "Prada Beauty", "Louis Vuitton Beauty", "Tom Ford Beauty"] },
+      { category: "luxury", section: "High-End Lifestyle Brands", names: ["Apple", "Dyson", "Samsung Lifestyle Products", "Tesla"] },
+
+      { category: "local", section: "Canada / Quebec Local Premium Beauty", names: ["Marcelle", "Jouviance", "BKIND", "Annabelle", "ATTITUDE"] },
+      { category: "local", section: "Canada / Quebec Food & Lifestyle", names: ["Cafe Saint-Henri", "Oatbox", "Maison Lavande", "Cook it", "Goodfood"] },
+      { category: "local", section: "Canada / Quebec Retail", names: ["Simons", "Indigo", "Shoppers Drug Mart", "Jean Coutu"] }
+    ];
+
+    const DOMAINS = {
+      "Amazon Baby Store": "amazon.com",
+      "Amazon Basics": "amazon.com",
+      "Annabelle": "annabelle.com",
+      "Apple": "apple.com",
+      "Armani Beauty": "armanibeauty.com",
+      "ATTITUDE": "attitudeliving.com",
+      "Avene": "aveneusa.com",
+      "Baby Brezza": "babybrezza.com",
+      "Balzac's Coffee": "balzacs.com",
+      "BetterHelp": "betterhelp.com",
+      "Bioderma": "bioderma.com",
+      "Biossance": "biossance.com",
+      "BKIND": "bkind.com",
+      "Bodum": "bodum.com",
+      "Cafe Olimpico": "cafeolimpico.com",
+      "Cafe Saint-Henri": "sainthenri.ca",
+      "Calm": "calm.com",
+      "Caudalie": "caudalie.com",
+      "CeraVe": "cerave.com",
+      "Chanel": "chanel.com",
+      "Chanel Beauty": "chanel.com",
+      "Charlotte Tilbury": "charlottetilbury.com",
+      "Cook it": "chefcookit.com",
+      "Cook it Quebec": "chefcookit.com",
+      "Costa Coffee": "costacoffee.com",
+      "Costco": "costco.ca",
+      "CoverGirl": "covergirl.com",
+      "Danone": "danone.com",
+      "De'Longhi": "delonghi.com",
+      "Dior": "dior.com",
+      "Dior Beauty": "dior.com",
+      "Dispatch Coffee": "dispatchcoffee.ca",
+      "Doona": "doona.com",
+      "Drunk Elephant": "drunkelephant.com",
+      "Duolingo": "duolingo.com",
+      "Dunkin'": "dunkindonuts.com",
+      "Dyson": "dyson.com",
+      "Ensure": "ensure.com",
+      "Estee Lauder": "esteelauder.com",
+      "Evenflo": "evenflo.com",
+      "Evernote": "evernote.com",
+      "Fellow Products": "fellowproducts.com",
+      "Fitbit": "fitbit.com",
+      "Flo": "flo.health",
+      "Fresh Beauty": "fresh.com",
+      "Frida Baby": "frida.com",
+      "Garnier": "garnierusa.com",
+      "Goodfood": "makegoodfood.ca",
+      "Goodfood Canada": "makegoodfood.ca",
+      "Graco": "gracobaby.com",
+      "Gucci Beauty": "gucci.com",
+      "Guerlain": "guerlain.com",
+      "Hatch Baby": "hatch.co",
+      "Headspace": "headspace.com",
+      "HelloFresh": "hellofresh.com",
+      "Herbalife": "herbalife.com",
+      "Huel": "huel.com",
+      "Huggies": "huggies.com",
+      "IGA": "iga.net",
+      "IKEA": "ikea.com",
+      "Ilia Beauty": "iliabeauty.com",
+      "Illy": "illy.com",
+      "Indigo": "indigo.ca",
+      "Jean Coutu": "jeancoutu.com",
+      "Jouviance": "jouviance.com",
+      "Keurig": "keurig.com",
+      "Lancome": "lancome-usa.com",
+      "La Roche-Posay": "laroche-posay.us",
+      "Lavazza": "lavazza.com",
+      "LG Home Appliances": "lg.com",
+      "Louis Vuitton Beauty": "louisvuitton.com",
+      "Lovevery": "lovevery.com",
+      "L'Oreal Paris": "lorealparisusa.com",
+      "MAC Cosmetics": "maccosmetics.com",
+      "Maison Lavande": "maisonlavande.ca",
+      "Marcelle": "marcelle.com",
+      "Marley Spoon": "marleyspoon.com",
+      "Maybelline": "maybelline.com",
+      "Method": "methodproducts.com",
+      "Metro": "metro.ca",
+      "Mint": "mint.intuit.com",
+      "Mrs. Meyer's": "mrsmeyers.com",
+      "Munchkin": "munchkin.com",
+      "MyFitnessPal": "myfitnesspal.com",
+      "NARS": "narscosmetics.com",
+      "Nespresso": "nespresso.com",
+      "Neutrogena": "neutrogena.com",
+      "Nike Training Club": "nike.com",
+      "Notion": "notion.so",
+      "NYX Cosmetics": "nyxcosmetics.com",
+      "Oatbox": "oatbox.com",
+      "Owlet": "owletcare.com",
+      "OXO": "oxo.com",
+      "Pampers": "pampers.com",
+      "Peet's Coffee": "peets.com",
+      "Philips": "philips.com",
+      "Philips Avent": "usa.philips.com",
+      "Philips Coffee Machines": "philips.com",
+      "Prada Beauty": "prada.com",
+      "President's Choice": "presidentschoice.ca",
+      "Quo Beauty": "shoppersdrugmart.ca",
+      "Rare Beauty": "rarebeauty.com",
+      "Revlon": "revlon.com",
+      "Revolut": "revolut.com",
+      "Rubbermaid": "rubbermaid.com",
+      "Samsung Lifestyle Products": "samsung.com",
+      "Saputo": "saputo.com",
+      "Second Cup": "secondcup.com",
+      "Shark": "sharkclean.com",
+      "Shoppers Drug Mart": "shoppersdrugmart.ca",
+      "Simplehuman": "simplehuman.com",
+      "Simons": "simons.ca",
+      "Skip Hop": "skiphop.com",
+      "Sleep Cycle": "sleepcycle.com",
+      "Smeg": "smeg.com",
+      "Starbucks": "starbucks.com",
+      "Tata Harper": "tataharperskincare.com",
+      "Tesla": "tesla.com",
+      "The Ordinary": "theordinary.com",
+      "TikTok Home Gadgets": "tiktok.com",
+      "Tim Hortons": "timhortons.ca",
+      "Todoist": "todoist.com",
+      "Tom Ford Beauty": "tomford.com",
+      "Trello": "trello.com",
+      "Tupperware": "tupperware.com",
+      "Van Houtte": "vanhoutte.com",
+      "Vichy": "vichyusa.com",
+      "Walmart Canada": "walmart.ca",
+      "YFood": "yfood.com",
+      "Youth to the People": "youthtothepeople.com",
+      "Yuka": "yuka.io",
+      "Yves Saint Laurent Beauty": "yslbeautyus.com"
+    };
+
+    const CATEGORY_COPY = {
+      coffee: { format: "Morning routine", angle: "Coffee ritual, product demo, day-in-the-life hook", audience: "Lifestyle, routine, work-from-home" },
+      beauty: { format: "Beauty content", angle: "GRWM, texture close-ups, honest routine, before/after", audience: "Beauty, skincare, makeup" },
+      mom: { format: "Family routine", angle: "Mom-life demo, practical review, nursery or outing setup", audience: "Parents, baby care, family lifestyle" },
+      home: { format: "Home reset", angle: "Before/after, organization, clean living, satisfying demo", audience: "Home, cleaning, organization" },
+      food: { format: "Meal prep", angle: "Taste test, grocery haul, easy dinner, weekly prep", audience: "Food, family, daily life" },
+      apps: { format: "App walkthrough", angle: "Screen-recorded routine, problem/solution, honest review", audience: "Digital lifestyle, wellness, productivity" },
+      luxury: { format: "Premium lifestyle", angle: "Aspirational routine, elegant product story, campaign-style reel", audience: "Premium beauty, fashion, tech lifestyle" },
+      local: { format: "Local feature", angle: "Quebec/Canada discovery, trusted local recommendation", audience: "Canada, Quebec, local lifestyle" }
+    };
+
+    const prospects = CLIENT_GROUPS.flatMap((group, groupIndex) => {
+      return group.names.map((name, nameIndex) => {
+        const copy = CATEGORY_COPY[group.category];
+        const domain = DOMAINS[name] || "";
+        return {
+          id: slugify(`${group.category}-${group.section}-${name}-${groupIndex}-${nameIndex}`),
+          name,
+          category: group.category,
+          section: group.section,
+          city: group.category === "local" ? "Canada / Quebec" : "Global / Canada",
+          format: copy.format,
+          budget: budgetFor(group.category, group.section),
+          score: scoreFor(name, groupIndex, nameIndex),
+          fit: fitFor(name, group),
+          angle: copy.angle,
+          audience: copy.audience,
+          domain,
+          image: domain ? `https://logo.clearbit.com/${domain}` : ""
+        };
+      });
+    });
+
+    let activeCategory = "all";
+    let searchQuery = "";
+    let selected = JSON.parse(localStorage.getItem("lazygirl_selected_v1") || "{}");
+    let currentDetailId = null;
+
+    const grid = document.getElementById("prospectGrid");
+    const bagPanel = document.getElementById("bagPanel");
+    const bagList = document.getElementById("bagList");
+    const toast = document.getElementById("toast");
+
+    function slugify(value) {
+      return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    }
+
+    function scoreFor(name, groupIndex, nameIndex) {
+      const base = 76 + ((name.length * 3 + groupIndex * 5 + nameIndex * 7) % 21);
+      return Math.min(98, base);
+    }
+
+    function budgetFor(category, section) {
+      if (category === "luxury" || section.includes("Luxury")) return "Premium";
+      if (section.includes("Global") || section.includes("High-End")) return "High";
+      if (category === "local") return "Local fit";
+      if (category === "apps") return "Digital";
+      return "Medium";
+    }
+
+    function fitFor(name, group) {
+      const templates = {
+        coffee: `${name} fonctionne tres bien pour une routine matin, un setup bureau, un moment cafe realiste et un storytelling lifestyle doux.`,
+        beauty: `${name} est fort pour du contenu UGC visuel: textures, routines, avis honnete, close-ups produit et transformation subtile.`,
+        mom: `${name} peut devenir une fiche tres utile pour du contenu famille: demonstration simple, quotidien de maman, test pratique et confiance.`,
+        home: `${name} est interessant pour les formats clean living, rangement, unboxing, avant/apres et demonstrations satisfaisantes.`,
+        food: `${name} se prete aux formats meal prep, courses, taste test, lunchbox, routine famille et contenu quotidien facile a comprendre.`,
+        apps: `${name} est adapte aux videos screen-record + face cam: probleme, solution, routine personnelle et resultat concret.`,
+        luxury: `${name} demande une approche plus premium: plans propres, rythme lent, elegance, histoire courte et positionnement aspirationnel.`,
+        local: `${name} est un bon angle Canada / Quebec: proximite, confiance locale, recommandation authentique et contenu bilingue possible.`
+      };
+      return templates[group.category] || `${name} est un prospect UGC a evaluer selon le brief, la DA et le potentiel contenu.`;
+    }
+
+    function initials(name) {
+      return name.replace(/\([^)]*\)/g, "").split(/\s+/).filter(Boolean).slice(0, 2).map(part => part[0]).join("").toUpperCase();
+    }
+
+    function hideBrokenLogo(img, name) {
+      img.style.display = "none";
+      const fallback = img.nextElementSibling;
+      if (fallback) {
+        fallback.textContent = initials(name);
+        fallback.style.display = "block";
+      }
+    }
+
+    function init() {
+      renderCategoryNav();
+      renderProspects();
+      renderBag();
+      document.getElementById("searchInput").addEventListener("input", event => {
+        searchQuery = event.target.value.toLowerCase().trim();
+        renderProspects();
+      });
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+          closeDetails();
+          toggleBag(false);
+        }
+      });
+    }
+
+    function renderCategoryNav() {
+      const html = categories.map(category => `
+        <button class="category-chip ${category.id === activeCategory ? "active" : ""}" type="button" onclick="setCategory('${category.id}')">${category.label}</button>
+      `).join("");
+      document.getElementById("categoryScroller").innerHTML = html;
+      document.getElementById("topCategories").innerHTML = categories.slice(0, 5).map(category => `
+        <button class="nav-pill ${category.id === activeCategory ? "active" : ""}" type="button" onclick="setCategory('${category.id}'); scrollToProspects();">${category.label}</button>
+      `).join("");
+    }
+
+    function setCategory(id) {
+      activeCategory = id;
+      renderCategoryNav();
+      renderProspects();
+    }
+
+    function getFilteredProspects() {
+      return prospects.filter(item => {
+        const inCategory = activeCategory === "all" || item.category === activeCategory;
+        const haystack = `${item.name} ${item.section} ${item.city} ${item.format} ${item.fit} ${item.audience} ${item.domain}`.toLowerCase();
+        return inCategory && (!searchQuery || haystack.includes(searchQuery));
+      });
+    }
+
+    function renderProspects() {
+      const filtered = getFilteredProspects();
+      if (!filtered.length) {
+        grid.innerHTML = `<div class="empty-state"><p>Aucun prospect ne correspond a cette recherche.</p></div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map((item, index) => {
+        const isSelected = Boolean(selected[item.id]);
+        return `
+          <article class="prospect-card ${isSelected ? "selected" : ""}" style="animation-delay:${index * 45}ms">
+            <div class="visual">
+              <div class="brand-logo-card">
+                ${item.image ? `<img src="${item.image}" alt="${item.name} logo" loading="lazy" onerror="hideBrokenLogo(this, '${escapeAttr(item.name)}')">` : ""}
+                <span class="fallback-logo" style="${item.image ? "" : "display:block"}">${initials(item.name)}</span>
+              </div>
+              <div class="score">${item.score}</div>
+              <div class="save-badge">Saved</div>
+            </div>
+            <div class="card-body">
+              <div class="card-title-row">
+                <h3 class="prospect-name">${item.name}</h3>
+                <span class="category-label">${categoryLabel(item.category)}</span>
+              </div>
+              <div class="prospect-meta">
+                <span class="meta-pill">${item.section}</span>
+                <span class="meta-pill">${item.format}</span>
+                <span class="meta-pill">${item.budget}</span>
+              </div>
+              <p class="fit-text">${item.fit}</p>
+              <div class="card-footer">
+                <button class="select-btn" type="button" onclick="toggleProspect('${item.id}')">${isSelected ? "Retirer" : "Choisir"}</button>
+                <button class="detail-btn" type="button" onclick="openDetails('${item.id}')" aria-label="Voir ${item.name}">+</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function categoryLabel(id) {
+      return categories.find(category => category.id === id)?.label || id;
+    }
+
+    function toggleProspect(id) {
+      if (selected[id]) {
+        delete selected[id];
+        showToast("Prospect retire de la selection.");
+      } else {
+        selected[id] = { priority: "Interested", note: "" };
+        showToast("Prospect ajoute a la selection.");
+        if (Object.keys(selected).length === 1) toggleBag(true);
+      }
+      persistSelection();
+      renderProspects();
+      renderBag();
+    }
+
+    function persistSelection() {
+      localStorage.setItem("lazygirl_selected_v1", JSON.stringify(selected));
+    }
+
+    function renderBag() {
+      const ids = Object.keys(selected);
+      document.getElementById("bagCount").textContent = ids.length;
+      document.getElementById("submitBtn").disabled = ids.length === 0;
+
+      if (!ids.length) {
+        bagList.innerHTML = `<div class="empty-state"><p>La selection est vide pour le moment.</p></div>`;
+        return;
+      }
+
+      bagList.innerHTML = ids.map(id => {
+        const item = prospects.find(p => p.id === id);
+        const data = selected[id];
+        return `
+          <div class="bag-item">
+            <div>
+              <strong>${item.name}</strong>
+              <span>${categoryLabel(item.category)} / ${item.city} / score ${item.score}</span>
+            </div>
+            <button class="remove-btn" type="button" onclick="toggleProspect('${id}')" aria-label="Retirer ${item.name}">x</button>
+            <select onchange="updateSelected('${id}', 'priority', this.value)" aria-label="Priorite pour ${item.name}">
+              ${["Priority", "Interested", "Maybe", "Not relevant"].map(option => `<option ${data.priority === option ? "selected" : ""}>${option}</option>`).join("")}
+            </select>
+            <textarea oninput="updateSelected('${id}', 'note', this.value)" placeholder="Note pour ${item.name}">${data.note || ""}</textarea>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function updateSelected(id, field, value) {
+      selected[id] = { ...selected[id], [field]: value };
+      persistSelection();
+    }
+
+    function toggleBag(force) {
+      const shouldOpen = typeof force === "boolean" ? force : !bagPanel.classList.contains("open");
+      bagPanel.classList.toggle("open", shouldOpen);
+    }
+
+    function openDetails(id) {
+      currentDetailId = id;
+      const item = prospects.find(p => p.id === id);
+      document.body.classList.add("modal-open");
+      document.getElementById("detailModal").classList.add("open");
+      document.getElementById("modalImage").style.setProperty("--image", `url('${item.image}')`);
+      document.getElementById("modalCategory").textContent = categoryLabel(item.category);
+      document.getElementById("modalTitle").textContent = item.name;
+      document.getElementById("modalFit").textContent = item.fit;
+      document.getElementById("modalDetails").innerHTML = `
+        <div class="detail-box"><span>Angle</span><strong>${item.angle}</strong></div>
+        <div class="detail-box"><span>Audience</span><strong>${item.audience}</strong></div>
+        <div class="detail-box"><span>Budget</span><strong>${item.budget}</strong></div>
+        <div class="detail-box"><span>Segment</span><strong>${item.section}</strong></div>
+      `;
+      const btn = document.getElementById("modalSelectBtn");
+      btn.textContent = selected[id] ? "Retirer de ma selection" : "Ajouter a ma selection";
+      btn.onclick = () => {
+        toggleProspect(id);
+        openDetails(id);
+      };
+    }
+
+    function closeDetails() {
+      document.body.classList.remove("modal-open");
+      document.getElementById("detailModal").classList.remove("open");
+      currentDetailId = null;
+    }
+
+    function scrollToProspects() {
+      document.getElementById("prospects").scrollIntoView({ behavior: "smooth", block: "start" });
+      setTimeout(() => document.getElementById("searchInput").focus({ preventScroll: true }), 420);
+    }
+
+    async function submitSelection() {
+      const ids = Object.keys(selected);
+      if (!ids.length) {
+        showToast("Ajoute au moins un prospect.");
+        return;
+      }
+
+      const payload = {
+        submittedAt: new Date().toISOString(),
+        clientName: document.getElementById("clientName").value.trim(),
+        clientEmail: document.getElementById("clientEmail").value.trim(),
+        globalNote: document.getElementById("globalNote").value.trim(),
+        page: location.href,
+        selections: ids.map(id => {
+          const item = prospects.find(p => p.id === id);
+          return { ...item, ...selected[id] };
+        })
+      };
+
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+      btn.textContent = "Envoi...";
+
+      try {
+        if (!SHEET_WEB_APP_URL) {
+          downloadDemoPayload(payload);
+          showToast("Mode demo: fichier JSON telecharge. Ajoute ton Apps Script URL pour envoyer au Sheet.");
+        } else {
+          await fetch(SHEET_WEB_APP_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+          });
+          showToast("Selection envoyee. Merci.");
+          selected = {};
+          persistSelection();
+          renderProspects();
+          renderBag();
+        }
+      } catch (error) {
+        showToast("Envoi impossible. Verifie l'URL Apps Script.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Envoyer la selection";
+      }
+    }
+
+    function downloadDemoPayload(payload) {
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `salma-ugc-selection-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function escapeAttr(value) {
+      return String(value).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+    }
+
+    let toastTimer;
+    function showToast(message) {
+      clearTimeout(toastTimer);
+      toast.textContent = message;
+      toast.classList.add("show");
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 3400);
+    }
+
+    init();
+  </script>
+</body>
+</html>
